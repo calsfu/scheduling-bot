@@ -1,7 +1,15 @@
 import { SlashCommandBuilder } from 'discord.js';
+const { InteractionOptionTypes } = require('discord-interactions');
 
 let dateTime = new Date();
-dateTime.getDay();
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const dow = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+function incDate(date:Date, num:number): Date {
+    date.setDate(dateTime.getDate() + num);
+    return date;
+}
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('schedule')
@@ -22,14 +30,34 @@ module.exports = {
             option
                 .setName('date')
                 .setDescription('The date of the event.')
-                .setAutocomplete(true)
-                .setRequired(true))
+                .addChoices(
+                    { name: months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()), value: '0' },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '1' },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '2' },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '3' },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '4' },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '5' },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '6' },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '7' },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '8' },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '9' },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '10' },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '11' },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '12' },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '13' },
+                    //{ name: months[dateTime.getMonth()] + ' ' + String(dateTime.setDate(dateTime.getDate() + 1)), value: dow[dateTime.setDate(dateTime.getDate() + 1)] },
+                )
+                // .setAutocomplete(true)
+                .setRequired(true)
+        )
+        
         .addStringOption(option =>
             option
                 .setName('time')
                 .setDescription('The time of the event.')
                 .setAutocomplete(true)
-                .setRequired(true))
+                .setRequired(true)
+        )
         .addStringOption(option =>
             option
                 .setName('duration')
@@ -60,20 +88,23 @@ module.exports = {
                     { name: '5 hours 45 minutes', value: '5 hours 45 minutes' },
                     { name: '6 hours', value: '6 hours' },
                 )
-                .setRequired(false)),
+                .setRequired(true)),
 	async execute(interaction:any) {
         const name = interaction.options.getString('name');
         const date = interaction.options.getString('date');
         const time = interaction.options.getString('time');
         const duration = interaction.options.getString('duration');
-
+        let tempDate = new Date();
+        
         //tester
         console.log(name);
         console.log(date);
         console.log(time);
-        console.log(duration);
-        console.log(dateTime.getDay());
+        console.log(dateTime.getMonth());
 
-		await interaction.reply('Successfuly added ${event} to the schedule on ${date} at ${time}!');
+        console.log(dateTime);
+        console.log(dateTime);
+        let reply = 'Successfuly added **' + name + '** to the schedule for **' + dow[incDate(tempDate, date).getDay()] + ', ' + months[tempDate.getMonth()] + ' ' + tempDate.getDate() + '** at **' + time + '**';
+		await interaction.reply(reply);
 	},
 };
