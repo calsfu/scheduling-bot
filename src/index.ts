@@ -25,8 +25,29 @@ for (const file of commandFiles) {
 	}
 }
 
+client.once(Events.ClientReady, (c:any) => {
+	console.log(`Ready! Logged in as ${c.user.tag}`);
+});
 
-client.on(Events.InteractionCreate, async (interaction:any) => {
+client.on(Events.InteractionCreate, async (interaction:any)=> { //autocomplete
+	if (!interaction.isAutocomplete()) return;
+		const command = interaction.client.commands.get(interaction.commandName);
+
+			if (!command) {
+				console.error(`No command matching ${interaction.commandName} was found.`);
+				return;
+			}
+
+			try {
+				await command.autocomplete(interaction);
+			} catch (error) {
+				console.error(error);
+			}
+		
+});
+
+
+client.on(Events.InteractionCreate, async (interaction:any) => { //nonautocomplete
 	if (!interaction.isChatInputCommand()) return;
 
 	const command = interaction.client.commands.get(interaction.commandName);
@@ -50,9 +71,6 @@ client.on(Events.InteractionCreate, async (interaction:any) => {
 
 // When the client is ready, run this code (only once)
 // We use 'c' for the event parameter to keep it separate from the already defined 'client'
-client.once(Events.ClientReady, (c:any) => {
-	console.log(`Ready! Logged in as ${c.user.tag}`);
-});
 
 // Log in to Discord with your client's token
 client.login(process.env.DISCORD_TOKEN);
