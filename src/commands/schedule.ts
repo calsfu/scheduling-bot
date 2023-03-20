@@ -1,6 +1,22 @@
 import { SlashCommandBuilder } from 'discord.js';
 const { InteractionOptionTypes } = require('discord-interactions');
 
+/*
+TODO
+- Timezones
+- Autocomplete for time
+- Saving data
+- Displaying data through embed
+- Editing data
+- Deleting data
+- Linking to data to channel/server
+
+
+Optional TODO
+- Linking to calender
+- Linking to google sheets
+
+*/
 let dateTime = new Date();
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const dow = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -31,21 +47,30 @@ module.exports = {
                 .setName('date')
                 .setDescription('The date of the event.')
                 .addChoices(
-                    { name: months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()), value: '0' },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '1' },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '2' },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '3' },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '4' },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '5' },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '6' },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '7' },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '8' },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '9' },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '10' },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '11' },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '12' },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: '13' },
-                    //{ name: months[dateTime.getMonth()] + ' ' + String(dateTime.setDate(dateTime.getDate() + 1)), value: dow[dateTime.setDate(dateTime.getDate() + 1)] },
+                    { name: months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
+
                 )
                 // .setAutocomplete(true)
                 .setRequired(true)
@@ -104,7 +129,7 @@ module.exports = {
 
         console.log(dateTime);
         console.log(dateTime);
-        let reply = 'Successfuly added **' + name + '** to the schedule for **' + dow[incDate(tempDate, date).getDay()] + ', ' + months[tempDate.getMonth()] + ' ' + tempDate.getDate() + '** at **' + time + '**';
+        let reply = 'Successfuly added **' + name + '** to the schedule for **' + date + '** at **' + time + '**';
 		await interaction.reply(reply);
 	},
 };
