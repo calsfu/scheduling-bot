@@ -35,13 +35,15 @@ module.exports = {
                 .setName('name')
                 .setDescription('The name of the event.')
                 .setRequired(true)
-                .addChoices(
-                    { name: 'match', value: 'match'},
-                    { name: 'scrim', value: 'scrim' },
-                    { name: 'tournament', value: 'tournament' },
-                    { name: 'practice', value: 'practice' },
-                    { name: 'other', value: 'other' },
-                ))
+                // .addChoices(
+                //     { name: 'match', value: 'match'},
+                //     { name: 'scrim', value: 'scrim' },
+                //     { name: 'tournament', value: 'tournament' },
+                //     { name: 'practice', value: 'practice' },
+                //     { name: 'other', value: 'other' },
+                // ))
+                .setAutocomplete(true)
+        )
         .addStringOption(option =>
             option
                 .setName('date')
@@ -113,11 +115,20 @@ module.exports = {
                     { name: '5 hours 45 minutes', value: '5 hours 45 minutes' },
                     { name: '6 hours', value: '6 hours' },
                 )
-                .setRequired(true)),
+                .setRequired(true))
+                .addRoleOption(option => 
+                    option
+                        .setName('role')
+                        .setDescription('The role that can see this event.')
+                        .setRequired(true)
+                )   
+                ,
+            
 	async execute(interaction:any) {
         const name = interaction.options.getString('name');
         const date = interaction.options.getString('date');
         const time = interaction.options.getString('time');
+        const role = interaction.options.getRole('role');
         const duration = interaction.options.getString('duration');
         let tempDate = new Date();
         
@@ -129,13 +140,20 @@ module.exports = {
 
         console.log(dateTime);
         console.log(dateTime);
-        let reply = 'Successfuly added **' + name + '** to the schedule for **' + date + '** at **' + time + '**';
+        let reply = 'Successfuly added **' + name + '** to the schedule on **' + date + '** at **' + time + '**' + ' for <@&' + role + '>';
 		await interaction.reply(reply);
 	},
     async autocomplete(interaction:any) {
-		const focusedValue = interaction.options.getFocused();
-		const choices = ['10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM', '5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM', '8:30 PM', '9:00 PM', '9:30 PM', '10:00 PM']
-		const filtered = choices.filter(choice => choice.startsWith(focusedValue));
+		const focusedValue = interaction.options.getFocused(true);
+        let choices = ['failed'];
+        if(focusedValue.name == 'name') {
+            choices = ['match', 'scrim', 'practice', 'tournament', 'other'];
+        }
+        if(focusedValue.name == 'time') {
+            choices = ['10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM', '5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM', '8:30 PM', '9:00 PM', '9:30 PM', '10:00 PM'];
+
+        }
+		const filtered = choices.filter(choice => choice.startsWith(focusedValue.value));
 		await interaction.respond(
 			filtered.map(choice => ({ name: choice, value: choice })),
 		);

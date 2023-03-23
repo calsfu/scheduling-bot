@@ -20,3 +20,12 @@ module.exports = {
 		}
 	},
 };
+
+rest.delete(Routes.applicationGuildCommand(clientId, guildId, '1088322176622542888'))
+	.then(() => console.log('Successfully deleted guild command'))
+	.catch(console.error);
+
+// for global commands
+rest.delete(Routes.applicationCommand(clientId, '1088322176622542888'))
+	.then(() => console.log('Successfully deleted application command'))
+	.catch(console.error);

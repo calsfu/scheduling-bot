@@ -7,7 +7,7 @@ const { ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
 config();
 
 // Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions] });
 
 client.commands = new Collection();
 
@@ -27,6 +27,11 @@ for (const file of commandFiles) {
 
 client.once(Events.ClientReady, (c:any) => {
 	console.log(`Ready! Logged in as ${c.user.tag}`);
+});
+
+client.on(Events.InteractionCreate, (interaction:any) => { //button
+	if (!interaction.isButton()) return;
+	console.log(interaction.id);
 });
 
 client.on(Events.InteractionCreate, async (interaction:any)=> { //autocomplete
