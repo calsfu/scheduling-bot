@@ -2,12 +2,28 @@ import { config } from 'dotenv';
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
-const { ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
+
 
 config();
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions] });
+
+
+// const Calender = sequelize.define('schedule', {
+// 	name: {
+// 		type: Sequelize.STRING,
+// 		unique: true,
+// 	},
+// 	description: Sequelize.TEXT,
+// 	date: {
+// 		type: Sequelize.DATE,
+// 		allowNull: false,
+// 	},
+// 	role: Sequelize.STRING,
+// 	guild: Sequelize.STRING,
+// 	channel: Sequelize.STRING,
+// });
 
 client.commands = new Collection();
 
@@ -54,14 +70,14 @@ client.on(Events.InteractionCreate, async (interaction:any)=> { //autocomplete
 
 client.on(Events.InteractionCreate, async (interaction:any) => { //nonautocomplete
 	if (!interaction.isChatInputCommand()) return;
-
 	const command = interaction.client.commands.get(interaction.commandName);
-
+	const commandName = interaction.commandName;
+	console.log('command name: ' + interaction.commandName);
 	if (!command) {
 		console.error(`No command matching ${interaction.commandName} was found.`);
 		return;
 	}
-
+	
 	try {
 		await command.execute(interaction);
 	} catch (error) {

@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from 'discord.js';
-const { InteractionOptionTypes } = require('discord-interactions');
+import { Calendar } from '../dbObjects';
 
+//const Calender = require('../index.ts');
 /*
 TODO
 - Timezones
@@ -129,17 +130,35 @@ module.exports = {
         const date = interaction.options.getString('date');
         const time = interaction.options.getString('time');
         const role = interaction.options.getRole('role');
+        //console.log(role);
         const duration = interaction.options.getString('duration');
         let tempDate = new Date();
-        
+        console.log(role);
+        // const event = await Calender.create({
+        //     name: interaction.options.getString('name'),
+        //     description: interaction.options.getString('description'),
+        //     date: interaction.options.getString('date'),
+        //     role: (interaction.options.getString('role').id).toString(),
+        //     guild: interaction.guildId,
+        // });
         //tester
-        console.log(name);
-        console.log(date);
-        console.log(time);
-        console.log(dateTime.getMonth());
+        // console.log(name);
+        // console.log(date);
+        // console.log(time);
 
-        console.log(dateTime);
-        console.log(dateTime);
+        // console.log(dateTime);
+        // console.log(dateTime);
+        const event = await Calendar.create({
+            name: name,
+            description: interaction.options.getString('description'),
+            date: date,
+            role: role.id,
+            guild: interaction.guildId,
+            channel: interaction.channelId,
+        });
+        if(event) {
+            console.log("added to calender");
+        }
         let reply = 'Successfuly added **' + name + '** to the schedule on **' + date + '** at **' + time + '**' + ' for <@&' + role + '>';
 		await interaction.reply(reply);
 	},
