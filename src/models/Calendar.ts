@@ -2,7 +2,7 @@ module.exports = (sequelize : any, DataTypes : any) => {
     return sequelize.define('calendar', {
         name: {
             type: DataTypes.STRING,
-            unique: true,
+            unique: false,
         },
         description: DataTypes.TEXT,
         date: {

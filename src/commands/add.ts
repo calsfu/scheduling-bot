@@ -1,6 +1,7 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { ActionRowBuilder, Events, ModalBuilder, TextInputBuilder, TextInputStyle, StringSelectMenuBuilder } from 'discord.js';
 import { Calendar } from '../dbObjects';
-
+import { SlashCommandBuilder } from 'discord.js';
+//import { dateTime } from '../index';
 //const Calender = require('../index.ts');
 /*
 TODO
@@ -19,6 +20,21 @@ Optional TODO
 
 */
 let dateTime = new Date();
+let monthNumbers: {[key: string]: string} = {
+    "jan": "01",
+    "feb": "02",
+    "mar": "03",
+    "apr": "04",
+    "may": "05",
+    "jun": "06",
+    "jul": "07",
+    "aug": "08",
+    "sep": "09",
+    "oct": "10",
+    "nov": "11",
+    "dec": "12",
+
+}
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const dow = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -31,109 +47,159 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('add')
 		.setDescription('Adds an event to the schedule.')
-        .addStringOption(option => 
+        .addRoleOption(option => 
             option
-                .setName('name')
-                .setDescription('The name of the event.')
+                .setName('role')
+                .setDescription('The role that can see this event.')
                 .setRequired(true)
-                // .addChoices(
-                //     { name: 'match', value: 'match'},
-                //     { name: 'scrim', value: 'scrim' },
-                //     { name: 'tournament', value: 'tournament' },
-                //     { name: 'practice', value: 'practice' },
-                //     { name: 'other', value: 'other' },
-                // ))
-                .setAutocomplete(true)
-        )
-        .addStringOption(option =>
-            option
-                .setName('date')
-                .setDescription('The date of the event.')
-                .addChoices(
-                    { name: months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-                    { name: months[incDate(dateTime, 1).getMonth()] + ' ' + String(dateTime.getDate()), value: dow[dateTime.getDay()] + ', ' + months[dateTime.getMonth()] + ' ' + String(dateTime.getDate()) },
-
-                )
-                // .setAutocomplete(true)
-                .setRequired(true)
-        )
-        
-        .addStringOption(option =>
-            option
-                .setName('time')
-                .setDescription('The time of the event.')
-                .setAutocomplete(true)
-                .setRequired(true)
-        )
-        .addStringOption(option =>
-            option
-                .setName('duration')
-                .setDescription('The duration of the event.')
-                .addChoices(
-                    { name: '15 minutes', value: '15 minutes' }, 
-                    { name: '30 minutes', value: '30 minutes' },
-                    { name: '45 minutes', value: '45 minutes' },
-                    { name: '1 hour', value: '1 hour' },
-                    { name: '1 hour 15 minutes', value: '1 hour 15 minutes' },
-                    { name: '1 hour 30 minutes', value: '1 hour 30 minutes' },
-                    { name: '1 hour 45 minutes', value: '1 hour 45 minutes' },
-                    { name: '2 hours', value: '2 hours' },
-                    { name: '2 hours 15 minutes', value: '2 hours 15 minutes' },
-                    { name: '2 hours 30 minutes', value: '2 hours 30 minutes' },
-                    { name: '2 hours 45 minutes', value: '2 hours 45 minutes' },
-                    { name: '3 hours', value: '3 hours' },
-                    { name: '3 hours 15 minutes', value: '3 hours 15 minutes' },
-                    { name: '3 hours 30 minutes', value: '3 hours 30 minutes' },
-                    { name: '3 hours 45 minutes', value: '3 hours 45 minutes' },
-                    { name: '4 hours', value: '4 hours' },
-                    { name: '4 hours 15 minutes', value: '4 hours 15 minutes' },
-                    { name: '4 hours 30 minutes', value: '4 hours 30 minutes' },
-                    { name: '4 hours 45 minutes', value: '4 hours 45 minutes' },
-                    { name: '5 hours', value: '5 hours' },
-                    { name: '5 hours 15 minutes', value: '5 hours 15 minutes' },
-                    { name: '5 hours 30 minutes', value: '5 hours 30 minutes' },
-                    { name: '5 hours 45 minutes', value: '5 hours 45 minutes' },
-                    { name: '6 hours', value: '6 hours' },
-                )
-                .setRequired(true))
-                .addRoleOption(option => 
-                    option
-                        .setName('role')
-                        .setDescription('The role that can see this event.')
-                        .setRequired(true)
-                )   
-                ,
+        )   
+        ,
             
 	async execute(interaction:any) {
-        const name = interaction.options.getString('name');
-        const date = interaction.options.getString('date');
-        const time = interaction.options.getString('time');
-        const role = interaction.options.getRole('role');
-        //console.log(role);
-        const duration = interaction.options.getString('duration');
-        let tempDate = new Date();
-        console.log(role);
+        const modal = new ModalBuilder() 
+            .setCustomId('add')
+            .setTitle('Add Event');
+
+        const nameInput: TextInputBuilder = new TextInputBuilder() 
+            .setCustomId('nameInput')
+            .setPlaceholder('scrim, match, tournament, ...')
+            .setLabel('Name')
+            .setMaxLength(25)
+            .setRequired(true)
+            .setStyle(TextInputStyle.Short);
+
+        const dateInput: TextInputBuilder = new TextInputBuilder()
+            .setCustomId('dateInput')
+            .setPlaceholder('mm/dd, March 30th, ...')
+            .setLabel('Date')
+            .setMaxLength(20)
+            .setRequired(true)
+            .setStyle(TextInputStyle.Short);;
+
+        const timeInput : TextInputBuilder= new TextInputBuilder()
+            .setCustomId('timeInput')
+            .setPlaceholder('1230 AM, 12:30pm, ...')
+            .setLabel('Time')
+            .setMaxLength(20)
+            .setRequired(true)
+            .setStyle(TextInputStyle.Short);;
+
+        const descriptionInput: TextInputBuilder = new TextInputBuilder()
+            .setCustomId('descriptionInput')
+            .setPlaceholder('Playing against ...')
+            .setLabel('Description')
+            .setMaxLength(50)
+            .setRequired(false)
+            .setStyle(TextInputStyle.Paragraph);;
+
+        const select = new ActionRowBuilder()
+			.addComponents(
+				new StringSelectMenuBuilder()
+					.setCustomId('select')
+					.setPlaceholder('Role')
+					.addOptions(
+						{
+							label: 'Select me',
+							description: 'This is a description',
+							value: 'first_option',
+						},
+						{
+							label: 'You can select me too',
+							description: 'This is also a description',
+							value: 'second_option',
+						},
+					),
+			);        
+        
+        const firstActionRow: ActionRowBuilder<TextInputBuilder> = new ActionRowBuilder();
+        const secondActionRow: ActionRowBuilder<TextInputBuilder> = new ActionRowBuilder()
+        const thirdActionRow : ActionRowBuilder<TextInputBuilder>= new ActionRowBuilder()
+        const fourthActionRow: ActionRowBuilder<TextInputBuilder> = new ActionRowBuilder()
+        firstActionRow.addComponents(nameInput);
+        secondActionRow.addComponents(dateInput);
+        thirdActionRow.addComponents(timeInput);
+        fourthActionRow.addComponents(descriptionInput);
+        modal.addComponents(firstActionRow, secondActionRow, thirdActionRow, fourthActionRow);
+            
+        await interaction.showModal(modal);
+
+        const submitted = await interaction.awaitModalSubmit({
+            // Timeout after a minute of not receiving any valid Modals
+            time: 60000,
+            // Make sure we only accept Modals from the User who sent the original Interaction we're responding to
+            filter: (i : any) => i.user.id === interaction.user.id,
+          }).catch((error : any) => {
+            // Catch any Errors that are thrown (e.g. if the awaitModalSubmit times out after 60000 ms)
+            console.error(error)
+            return null
+          })
+        // const collector = interaction.channel.createMessageComponentCollector({ time: 15000 });
+
+        // collector.on('collect', async (i : any) => {
+        //     await i.update({ content: 'A button was clicked!', components: [] });
+        // });
+
+        // collector.on('end', (collected : any) => console.log(`Collected ${collected.size} items`));
+        //const showModal = await interaction.reply({ content: 'Add Event', components: [modal], fetchReply: true, type:modal });
+        console.log("Passed submitted");
+        if(submitted) {
+            const name = submitted.fields.getTextInputValue('nameInput');
+            const date = submitted.fields.getTextInputValue('dateInput');
+            const time = submitted.fields.getTextInputValue('timeInput');
+            const description = submitted.fields.getTextInputValue('descriptionInput');
+            const role = interaction.options.getRole('role');
+            
+        
+            //date will be in in the form mm/dd or month day. Need to convert to 2023-mm-dd format
+            //time will be in the form 1230 AM or 12:30pm. Need to convert to 24 hour format
+            let timeString = time.replace(/[\s:]/g, ""); //gets rid of spaces and colons
+            let timeArray = timeString.split(/(\d+)/); //splits into time and am/pm
+            let filteredTimeArray = timeArray.filter(Boolean); //removes empty strings
+            let firstLetter = filteredTimeArray[1].charAt(0);//gets first letter of am/pm
+            console.log("time " + filteredTimeArray[0]);
+            let hour = filteredTimeArray[0].substring(0, filteredTimeArray[0].length - 2);
+            let minute = filteredTimeArray[0].substring(filteredTimeArray[0].length - 2);
+            //minute = parseInt(minute);
+            if (firstLetter.toLowerCase() === 'p') {
+                hour = (parseInt(hour) + 12).toString();
+            }
+            else {
+                if(hour === "12") {
+                    hour = "00";
+                }
+            }
+            let dateString = date.replace(/ /g, '');//either in March30 or 03/30 format
+            let splitDigits = dateString.split(/(\d+)/); //either in [March, 30] or [03, /, 30] format
+            let filteredDateArray = splitDigits.filter((item:string) => !item.includes("/")); //removes / from [03, /, 30] format
+            //let dateArray = dateString.split('/');//either in [March30] or [03, 30] format
+            let month = filteredDateArray[0];
+            let monthNumber : string | undefined;
+            if(isNaN(month)) {
+                month = month.substring(0, 3);
+                monthNumber = monthNumbers[month.toLowerCase()];
+            }
+            if (monthNumber === undefined) {
+                // Handle invalid month name here
+                console.log("Invalid month name:");
+                monthNumber = "00"; // Assign a default value, such as 0
+            }
+            let day = filteredDateArray[1];
+            monthNumber = monthNumber.toString().padStart(2, '0');
+            day = day.padStart(2, '0'); 
+            //let finalDate = new Date(2023, monthNumber, day, hour, minute);
+            let ISOdate = "2023-" + monthNumber + "-" + day + "T" + hour + ":" + minute + ":00Z";
+            console.log(ISOdate);
+            let finalDate = new Date(ISOdate);
+            console.log(finalDate)
+
+
+
+
+
+
+        
+        // console.log(dateString);
+        // console.log(dateTime);
         // const event = await Calender.create({
         //     name: interaction.options.getString('name'),
         //     description: interaction.options.getString('description'),
@@ -146,12 +212,12 @@ module.exports = {
         // console.log(date);
         // console.log(time);
 
-        // console.log(dateTime);
-        // console.log(dateTime);
+        console.log(dateTime);
+        console.log(dateTime);
         const event = await Calendar.create({
             name: name,
             description: interaction.options.getString('description'),
-            date: date,
+            date: finalDate,
             role: role.id,
             guild: interaction.guildId,
             channel: interaction.channelId,
@@ -159,8 +225,11 @@ module.exports = {
         if(event) {
             console.log("added to calender");
         }
-        let reply = 'Successfuly added **' + name + '** to the schedule on **' + date + '** at **' + time + '**' + ' for <@&' + role + '>';
-		await interaction.reply(reply);
+            let reply = 'Successfuly added **' + name + '** to the schedule on **' + date + '** at **' + time + '**' + ' for <@&' + role.id +  '>';
+            await submitted.reply(reply);
+        }
+        
+        
 	},
     async autocomplete(interaction:any) {
 		const focusedValue = interaction.options.getFocused(true);

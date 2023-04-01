@@ -3,6 +3,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 
+let dateTime : Date = new Date(); 
+
+export { dateTime };
 
 config();
 
@@ -71,11 +74,13 @@ client.on(Events.InteractionCreate, async (interaction:any)=> { //autocomplete
 client.on(Events.InteractionCreate, async (interaction:any) => { //nonautocomplete
 	if (!interaction.isChatInputCommand()) return;
 	const command = interaction.client.commands.get(interaction.commandName);
-	const commandName = interaction.commandName;
 	console.log('command name: ' + interaction.commandName);
 	if (!command) {
 		console.error(`No command matching ${interaction.commandName} was found.`);
 		return;
+	}
+	if(command == 'add') {
+		dateTime = new Date();
 	}
 	
 	try {
@@ -88,6 +93,11 @@ client.on(Events.InteractionCreate, async (interaction:any) => { //nonautocomple
 			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
 		}
 	}
+});
+
+client.on(Events.InteractionCreate, (interaction : any) => {
+	if (!interaction.isModalSubmit()) return;
+	//console.log(interaction);
 });
 
 // When the client is ready, run this code (only once)
