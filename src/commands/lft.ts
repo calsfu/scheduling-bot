@@ -92,6 +92,12 @@ module.exports = {
             //     message.reply('User not found.');
             // });
         collector.on('collect', (i : any) => {
+            i.deferUpdate();
+            if(players.includes(user.id)) {
+                message.reply({ content: 'You have already joined this event', ephemeral: true });
+                return;
+            }
+            
             if(i.customId === 'primary' && i.user.id === user.id) {
                 players.push(user.id);
                 embed = new EmbedBuilder() 
@@ -104,6 +110,10 @@ module.exports = {
                             {name: "Players", value: playerString(players), inline: true},
                         )    
                         .setTimestamp();
+                if(players.length >= num) {
+                    message.edit({ embeds: [embed], components: [] });
+                    return;
+                }
                 message.edit({ embeds: [embed]});
             }
         });
