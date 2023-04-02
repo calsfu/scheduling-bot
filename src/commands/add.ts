@@ -181,9 +181,10 @@ module.exports = {
                 monthNumber = "00"; // Assign a default value, such as 0
             }
             let day = filteredDateArray[1];
-            monthNumber = monthNumber.toString().padStart(2, '0');
+            //monthNumber = monthNumber.toString().padStart(2, '0');
             hour = hour.padStart(2, '0');
             day = day.padStart(2, '0'); 
+            minute = minute.padStart(2, '0');
             //let finalDate = new Date(2023, monthNumber, day, hour, minute);
             let ISOdate = "2023-" + monthNumber + "-" + day + "T" + hour + ":" + minute + ":00Z";
             console.log(ISOdate);

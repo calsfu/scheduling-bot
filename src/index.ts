@@ -136,4 +136,4 @@ setInterval(async () => {
 		event.update({ reminderSent: true });
 	});
 
-  }, 60  * 60 * 1000); // Check every hour
+  }, 15  * 60 * 1000); // Check every 15 minutes
