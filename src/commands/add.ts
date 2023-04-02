@@ -19,7 +19,7 @@ Optional TODO
 - Linking to google sheets
 
 */
-let dateTime = new Date();
+
 let monthNumbers: {[key: string]: string} = {
     "jan": "01",
     "feb": "02",
@@ -38,10 +38,7 @@ let monthNumbers: {[key: string]: string} = {
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const dow = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-function incDate(date:Date, num:number): Date {
-    date.setDate(dateTime.getDate() + num);
-    return date;
-}
+
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -185,13 +182,19 @@ module.exports = {
             }
             let day = filteredDateArray[1];
             monthNumber = monthNumber.toString().padStart(2, '0');
+            hour = hour.padStart(2, '0');
             day = day.padStart(2, '0'); 
             //let finalDate = new Date(2023, monthNumber, day, hour, minute);
             let ISOdate = "2023-" + monthNumber + "-" + day + "T" + hour + ":" + minute + ":00Z";
             console.log(ISOdate);
             let finalDate = new Date(ISOdate);
-            console.log(finalDate)
-
+            console.log(finalDate);
+            let currentDate = new Date();
+            console.log(currentDate); 
+            if(finalDate < currentDate) {
+                console.log("Date is in the past");
+                return submitted.reply({ content: 'Invalid Date: Date is in the past', ephemeral: true });
+            }
 
 
 
@@ -212,21 +215,21 @@ module.exports = {
         // console.log(date);
         // console.log(time);
 
-        console.log(dateTime);
-        console.log(dateTime);
-        const event = await Calendar.create({
-            name: name,
-            description: interaction.options.getString('description'),
-            date: finalDate,
-            role: role.id,
-            guild: interaction.guildId,
-            channel: interaction.channelId,
-        });
-        if(event) {
-            console.log("added to calender");
-        }
-            let reply = 'Successfuly added **' + name + '** to the schedule on **' + date + '** at **' + time + '**' + ' for <@&' + role.id +  '>';
-            await submitted.reply(reply);
+            const event = await Calendar.create({ //adds to database
+                name: name,
+                description: description,
+                date: finalDate,
+                role: role.id,
+                guild: interaction.guildId,
+                channel: interaction.channelId,
+                dayReminder: false,
+                hourReminder: false,
+            });
+            if(event) { 
+                console.log("added to calender");
+            }
+                let reply = 'Successfuly added **' + name + '** to the schedule on **' + date + '** at **' + time + '**' + ' for <@&' + role.id +  '>';
+                await submitted.reply(reply); //replies to text
         }
         
         

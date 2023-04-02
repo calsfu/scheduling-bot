@@ -1,32 +1,15 @@
 import { config } from 'dotenv';
+import { Calendar } from './dbObjects';
+import { Sequelize, DataTypes, Op } from 'sequelize';
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 
-let dateTime : Date = new Date(); 
-
-export { dateTime };
 
 config();
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions] });
-
-
-// const Calender = sequelize.define('schedule', {
-// 	name: {
-// 		type: Sequelize.STRING,
-// 		unique: true,
-// 	},
-// 	description: Sequelize.TEXT,
-// 	date: {
-// 		type: Sequelize.DATE,
-// 		allowNull: false,
-// 	},
-// 	role: Sequelize.STRING,
-// 	guild: Sequelize.STRING,
-// 	channel: Sequelize.STRING,
-// });
 
 client.commands = new Collection();
 
@@ -43,6 +26,11 @@ for (const file of commandFiles) {
 		console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
 	}
 }
+
+
+
+
+
 
 client.once(Events.ClientReady, (c:any) => {
 	console.log(`Ready! Logged in as ${c.user.tag}`);
@@ -79,9 +67,7 @@ client.on(Events.InteractionCreate, async (interaction:any) => { //nonautocomple
 		console.error(`No command matching ${interaction.commandName} was found.`);
 		return;
 	}
-	if(command == 'add') {
-		dateTime = new Date();
-	}
+
 	
 	try {
 		await command.execute(interaction);
@@ -105,3 +91,49 @@ client.on(Events.InteractionCreate, (interaction : any) => {
 
 // Log in to Discord with your client's token
 client.login(process.env.DISCORD_TOKEN);
+
+setInterval(async () => {
+	const now = new Date();
+	const twentyFourHoursFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+	const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
+  
+	const oneDay = await Calendar.findAll({
+	  where: {
+		date: {
+		  [Op.lt]: twentyFourHoursFromNow,
+		  [Op.gt]: now,
+		},
+		dayReminder: false,
+	  },
+	});
+
+	const oneHour = await Calendar.findAll({
+		where: {
+			date: {
+				[Op.lt]: oneHourFromNow,
+				[Op.gt]: now,
+			},
+			hourReminder: false,
+		}
+	});
+	if (!oneDay.length && !oneHour.length) {
+		console.log("No events found.");
+		return;
+	}
+	oneDay.forEach((event : any) => {
+	  const channel = client.channels.cache.get(event.channel);
+	  channel.send(`**Reminder:** ${event.name} is starting in 24 hours! <@&${event.role}>`);
+  
+	  // Mark the event as having had a reminder sent
+	  event.update({ reminderSent: true });
+	});
+
+	oneHour.forEach((event : any) => {
+		const channel = client.channels.cache.get(event.channel);
+		channel.send(`**Reminder:** ${event.name} is starting in 1 hour! <@&${event.role}>`);
+
+		// Mark the event as having had a reminder sent
+		event.update({ reminderSent: true });
+	});
+
+  }, 60  * 60 * 1000); // Check every hour

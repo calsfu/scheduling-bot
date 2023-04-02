@@ -12,6 +12,8 @@ module.exports = (sequelize : any, DataTypes : any) => {
         role: DataTypes.STRING,
         guild: DataTypes.STRING,
         channel: DataTypes.STRING,
+        dayReminder: DataTypes.BOOLEAN,
+        hourReminder: DataTypes.BOOLEAN,
     });
 };
 
