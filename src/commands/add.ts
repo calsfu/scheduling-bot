@@ -1,6 +1,7 @@
 import { ActionRowBuilder, Events, ModalBuilder, TextInputBuilder, TextInputStyle, StringSelectMenuBuilder } from 'discord.js';
 import { Calendar } from '../dbObjects';
 import { SlashCommandBuilder } from 'discord.js';
+import { error } from 'console';
 const fs = require('fs');
 //import { dateTime } from '../index';
 //const Calender = require('../index.ts');
@@ -164,6 +165,13 @@ module.exports = {
                 console.log("time " + filteredTimeArray[0]);
                 let hour = filteredTimeArray[0].substring(0, filteredTimeArray[0].length - 2);
                 let minute = filteredTimeArray[0].substring(filteredTimeArray[0].length - 2);
+                console.log("before check:", hour);
+                if (hour === "" ) {
+                  console.log("hour is NaN");
+                  hour = minute;
+                  minute = "00";
+                }
+                console.log("after check:", hour);
                 //minute = parseInt(minute);
                 if (firstLetter.toLowerCase() === 'p' && hour !== "12") {
                     hour = (parseInt(hour) + 12).toString();
@@ -176,27 +184,44 @@ module.exports = {
                 let dateString = date.replace(/ /g, '');//either in March30 or 03/30 format
                 let splitDigits = dateString.split(/(\d+)/); //either in [March, 30] or [03, /, 30] format
                 let filteredDateArray = splitDigits.filter((item:string) => !item.includes("/")); //removes / from [03, /, 30] format
+                filteredDateArray = filteredDateArray.filter((str: string) => str !== "");
                 //let dateArray = dateString.split('/');//either in [March30] or [03, 30] format
                 let month = filteredDateArray[0];
                 let monthNumber : string | undefined;
+                console.log("month " + month);
+                console.log("filtered date array: " + filteredDateArray);
                 if(isNaN(month)) {
                     month = month.substring(0, 3);
                     monthNumber = monthNumbers[month.toLowerCase()];
+                    if (monthNumber === undefined) {
+                        // Handle invalid month name here
+                        console.log("Invalid month name:");
+                        
+                        throw(error);
+                    }
                 }
-                if (monthNumber === undefined) {
-                    // Handle invalid month name here
-                    console.log("Invalid month name:");
-                    monthNumber = "00"; // Assign a default value, such as 0
+                else {
+                    monthNumber = month.toString().padStart(2, '0');
                 }
+                console.log(monthNumber)
                 let day = filteredDateArray[1];
                 //monthNumber = monthNumber.toString().padStart(2, '0');
                 hour = hour.padStart(2, '0');
                 day = day.padStart(2, '0'); 
                 minute = minute.padStart(2, '0');
+                console.log("month " + monthNumber);
+                console.log("day " + day);
+                console.log("hour " + hour);
+                console.log("minute " + minute);
+
                 //let finalDate = new Date(2023, monthNumber, day, hour, minute);
                 let ISOdate = "2023-" + monthNumber + "-" + day + "T" + hour + ":" + minute + ":00Z";
                 console.log(ISOdate);
                 let finalDate = new Date(ISOdate);
+                if(isNaN(finalDate.getTime())) {
+                    console.log("Invalid Date");
+                    throw(error);
+                }
                 console.log(finalDate);
                 
                 let currentDate = new Date();

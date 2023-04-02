@@ -36,9 +36,6 @@ module.exports = {
         // console.log(schedule[0].dataValues.date.getTimezoneOffset())
         //schedule.date.setUTCHours(0);
         //console.log(schedule[3].dataValues.date.getDay())
-        console.log(schedule[3].date)
-        console.log(schedule[3].date.getUTCHours())
-        console.log(schedule[3].date.getMinutes())
         for (let event of schedule) {
             message = message + dow[event.date.getDay()] + ', ' + months[event.date.getMonth()] + " " + event.date.getDate() + ' at '  + event.date.getUTCHours() + ":" +  event.name + '\n';
         }

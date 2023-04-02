@@ -3,6 +3,5 @@ node_modules
 tsconfig.json
 dist
 config.json
-oldadd.txt
 *.txt
 *.sqlite
