@@ -1,6 +1,7 @@
 import { ActionRowBuilder, Events, ModalBuilder, TextInputBuilder, TextInputStyle, StringSelectMenuBuilder } from 'discord.js';
 import { Calendar } from '../dbObjects';
 import { SlashCommandBuilder } from 'discord.js';
+const fs = require('fs');
 //import { dateTime } from '../index';
 //const Calender = require('../index.ts');
 /*
@@ -140,97 +141,103 @@ module.exports = {
         //const showModal = await interaction.reply({ content: 'Add Event', components: [modal], fetchReply: true, type:modal });
         console.log("Passed submitted");
         if(submitted) {
-            const name = submitted.fields.getTextInputValue('nameInput');
-            const date = submitted.fields.getTextInputValue('dateInput');
-            const time = submitted.fields.getTextInputValue('timeInput');
-            const description = submitted.fields.getTextInputValue('descriptionInput');
-            const role = interaction.options.getRole('role');
+            try {
+                const name = submitted.fields.getTextInputValue('nameInput');
+                const date = submitted.fields.getTextInputValue('dateInput');
+                const time = submitted.fields.getTextInputValue('timeInput');
+                const description = submitted.fields.getTextInputValue('descriptionInput');
+                const role = interaction.options.getRole('role');
+                
             
-        
-            //date will be in in the form mm/dd or month day. Need to convert to 2023-mm-dd format
-            //time will be in the form 1230 AM or 12:30pm. Need to convert to 24 hour format
-            let timeString = time.replace(/[\s:]/g, ""); //gets rid of spaces and colons
-            let timeArray = timeString.split(/(\d+)/); //splits into time and am/pm
-            let filteredTimeArray = timeArray.filter(Boolean); //removes empty strings
-            let firstLetter = filteredTimeArray[1].charAt(0);//gets first letter of am/pm
-            console.log("time " + filteredTimeArray[0]);
-            let hour = filteredTimeArray[0].substring(0, filteredTimeArray[0].length - 2);
-            let minute = filteredTimeArray[0].substring(filteredTimeArray[0].length - 2);
-            //minute = parseInt(minute);
-            if (firstLetter.toLowerCase() === 'p') {
-                hour = (parseInt(hour) + 12).toString();
-            }
-            else {
-                if(hour === "12") {
-                    hour = "00";
+                //date will be in in the form mm/dd or month day. Need to convert to 2023-mm-dd format
+                //time will be in the form 1230 AM or 12:30pm. Need to convert to 24 hour format
+                let timeString = time.replace(/[\s:]/g, ""); //gets rid of spaces and colons
+                let timeArray = timeString.split(/(\d+)/); //splits into time and am/pm
+                let filteredTimeArray = timeArray.filter(Boolean); //removes empty strings
+                //let firstLetter = filteredTimeArray[1].charAt(0);//gets first letter of am/pm
+                let firstLetter;
+                if (filteredTimeArray[1] && filteredTimeArray[1] !== '') {
+                    firstLetter = filteredTimeArray[1].charAt(0);
+                } else {
+                    firstLetter = 'p';
                 }
-            }
-            let dateString = date.replace(/ /g, '');//either in March30 or 03/30 format
-            let splitDigits = dateString.split(/(\d+)/); //either in [March, 30] or [03, /, 30] format
-            let filteredDateArray = splitDigits.filter((item:string) => !item.includes("/")); //removes / from [03, /, 30] format
-            //let dateArray = dateString.split('/');//either in [March30] or [03, 30] format
-            let month = filteredDateArray[0];
-            let monthNumber : string | undefined;
-            if(isNaN(month)) {
-                month = month.substring(0, 3);
-                monthNumber = monthNumbers[month.toLowerCase()];
-            }
-            if (monthNumber === undefined) {
-                // Handle invalid month name here
-                console.log("Invalid month name:");
-                monthNumber = "00"; // Assign a default value, such as 0
-            }
-            let day = filteredDateArray[1];
-            //monthNumber = monthNumber.toString().padStart(2, '0');
-            hour = hour.padStart(2, '0');
-            day = day.padStart(2, '0'); 
-            minute = minute.padStart(2, '0');
-            //let finalDate = new Date(2023, monthNumber, day, hour, minute);
-            let ISOdate = "2023-" + monthNumber + "-" + day + "T" + hour + ":" + minute + ":00Z";
-            console.log(ISOdate);
-            let finalDate = new Date(ISOdate);
-            console.log(finalDate);
-            let currentDate = new Date();
-            console.log(currentDate); 
-            if(finalDate < currentDate) {
-                console.log("Date is in the past");
-                return submitted.reply({ content: 'Invalid Date: Date is in the past', ephemeral: true });
-            }
+                console.log("time " + filteredTimeArray[0]);
+                let hour = filteredTimeArray[0].substring(0, filteredTimeArray[0].length - 2);
+                let minute = filteredTimeArray[0].substring(filteredTimeArray[0].length - 2);
+                //minute = parseInt(minute);
+                if (firstLetter.toLowerCase() === 'p' && hour !== "12") {
+                    hour = (parseInt(hour) + 12).toString();
+                }
+                else {
+                    if(hour === "12") {
+                        hour = "00";
+                    }
+                }
+                let dateString = date.replace(/ /g, '');//either in March30 or 03/30 format
+                let splitDigits = dateString.split(/(\d+)/); //either in [March, 30] or [03, /, 30] format
+                let filteredDateArray = splitDigits.filter((item:string) => !item.includes("/")); //removes / from [03, /, 30] format
+                //let dateArray = dateString.split('/');//either in [March30] or [03, 30] format
+                let month = filteredDateArray[0];
+                let monthNumber : string | undefined;
+                if(isNaN(month)) {
+                    month = month.substring(0, 3);
+                    monthNumber = monthNumbers[month.toLowerCase()];
+                }
+                if (monthNumber === undefined) {
+                    // Handle invalid month name here
+                    console.log("Invalid month name:");
+                    monthNumber = "00"; // Assign a default value, such as 0
+                }
+                let day = filteredDateArray[1];
+                //monthNumber = monthNumber.toString().padStart(2, '0');
+                hour = hour.padStart(2, '0');
+                day = day.padStart(2, '0'); 
+                minute = minute.padStart(2, '0');
+                //let finalDate = new Date(2023, monthNumber, day, hour, minute);
+                let ISOdate = "2023-" + monthNumber + "-" + day + "T" + hour + ":" + minute + ":00Z";
+                console.log(ISOdate);
+                let finalDate = new Date(ISOdate);
+                console.log(finalDate);
+                
+                let currentDate = new Date();
+                console.log(currentDate); 
 
+                if(finalDate < currentDate) {
+                    console.log("Date is in the past");
+                    return submitted.reply({ content: 'Invalid Date: Date is in the past', ephemeral: true });
+                }
 
+                const event = await Calendar.create({ //adds to database
+                    name: name,
+                    description: description,
+                    date: finalDate,
+                    role: role.id,
+                    guild: interaction.guildId,
+                    channel: interaction.channelId,
+                    dayReminder: false,
+                    hourReminder: false,
+                });
 
+                if(event) { 
+                    console.log("added to calender");
+                }
 
-
-        
-        // console.log(dateString);
-        // console.log(dateTime);
-        // const event = await Calender.create({
-        //     name: interaction.options.getString('name'),
-        //     description: interaction.options.getString('description'),
-        //     date: interaction.options.getString('date'),
-        //     role: (interaction.options.getString('role').id).toString(),
-        //     guild: interaction.guildId,
-        // });
-        //tester
-        // console.log(name);
-        // console.log(date);
-        // console.log(time);
-
-            const event = await Calendar.create({ //adds to database
-                name: name,
-                description: description,
-                date: finalDate,
-                role: role.id,
-                guild: interaction.guildId,
-                channel: interaction.channelId,
-                dayReminder: false,
-                hourReminder: false,
-            });
-            if(event) { 
-                console.log("added to calender");
-            }
-                let reply = 'Successfuly added **' + name + '** to the schedule on **' + date + '** at **' + time + '**' + ' for <@&' + role.id +  '>';
+                let returnTime = function(time:Date) {
+                    let hours = time.getUTCHours();
+                    let minutes = time.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12; // the hour '0' should be '12'
+                // let minminutes = minutes < 10 ? '0' + minutes : minutes;
+                    minute = minute.padStart(2, '0');
+                    let strTime = hours + ':' + minute + ' ' + ampm;
+                    return strTime;
+                }
+                let reply = 'Successfuly added **' + name + '** to the schedule on **' + date + '** at **' + returnTime(finalDate) + '**' + ' for <@&' + role.id +  '>';
                 await submitted.reply(reply); //replies to text
+            } catch (error) {
+                return submitted.reply({ content: 'Invalid Date. If this an error, please dm calsfu#9126', ephemeral: true });
+            }
         }
         
         
