@@ -1,7 +1,11 @@
 import { ActionRowBuilder, Events, ModalBuilder, TextInputBuilder, TextInputStyle, StringSelectMenuBuilder } from 'discord.js';
 import { Calendar } from '../dbObjects';
+import { Timezone } from '../dbObjects';
 import { SlashCommandBuilder } from 'discord.js';
 import { error } from 'console';
+import moment from 'moment-timezone';
+//import '../../moment-timezone-with-data';
+moment().tz("America/Los_Angeles").format();
 const fs = require('fs');
 //import { dateTime } from '../index';
 //const Calender = require('../index.ts');
@@ -55,6 +59,19 @@ module.exports = {
         ,
             
 	async execute(interaction:any) {
+        const guildTimezone = await Timezone.findAll({
+            where: {
+                guild : interaction.guild.id
+            }
+        });
+        if(guildTimezone.length == 0){ //returns if timezone is not set
+            await interaction.reply("Please set the timezone for this server using /timezone.");
+            return;
+        }
+        const timezone = guildTimezone[0].timezone; //0 not needed since guildid is unique
+        console.log(
+            "Timezone: " + timezone
+        );
         const modal = new ModalBuilder() 
             .setCustomId('add')
             .setTitle('Add Event');
@@ -149,6 +166,7 @@ module.exports = {
                 const description = submitted.fields.getTextInputValue('descriptionInput');
                 const role = interaction.options.getRole('role');
                 
+                
             
                 //date will be in in the form mm/dd or month day. Need to convert to 2023-mm-dd format
                 //time will be in the form 1230 AM or 12:30pm. Need to convert to 24 hour format
@@ -215,9 +233,11 @@ module.exports = {
                 console.log("minute " + minute);
 
                 //let finalDate = new Date(2023, monthNumber, day, hour, minute);
-                let ISOdate = "2023-" + monthNumber + "-" + day + "T" + hour + ":" + minute + ":00Z";
-                console.log(ISOdate);
-                let finalDate = new Date(ISOdate);
+                let ISOdate = "2023-" + monthNumber + "-" + day + "T" + hour + ":" + minute + ":00";
+                const momentDate = moment.tz(ISOdate, timezone);
+                console.log(momentDate);
+                console.log(momentDate.format());
+                let finalDate = new Date(momentDate.format());
                 if(isNaN(finalDate.getTime())) {
                     console.log("Invalid Date");
                     throw(error);
@@ -258,9 +278,10 @@ module.exports = {
                     let strTime = hours + ':' + minute + ' ' + ampm;
                     return strTime;
                 }
-                let reply = 'Successfuly added **' + name + '** to the schedule on **' + date + '** at **' + returnTime(finalDate) + '**' + ' for <@&' + role.id +  '>';
+                let reply = 'Successfuly added **' + name + '** to the schedule on **' + date + '** at **' + returnTime(finalDate) + timezone + '**' + ' for <@&' + role.id +  '>';
                 await submitted.reply(reply); //replies to text
             } catch (error) {
+                console.log(error);
                 return submitted.reply({ content: 'Invalid Date. If this an error, please dm calsfu#9126', ephemeral: true });
             }
         }

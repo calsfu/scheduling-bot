@@ -5,3 +5,4 @@ dist
 config.json
 *.txt
 *.sqlite
+moment-timezone-with-data.js

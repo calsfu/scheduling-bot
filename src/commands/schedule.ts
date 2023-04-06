@@ -20,7 +20,7 @@ module.exports = {
     async execute(interaction:any ) {
         //let schedule = await interaction.client.db.getSchedule();
         //let timezone = interaction.client.db.getTimezone();
-        
+        console.log("Timezone: " + Intl.DateTimeFormat().resolvedOptions().timeZone); 
         let role = interaction.options.getRole('role');
         let schedule = await Calendar.findAll({ where: { role: role.id}});
         let message = "**Current Schedule for " + '<@&' + role + '>**' +":\n";

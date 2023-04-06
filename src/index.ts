@@ -120,20 +120,27 @@ setInterval(async () => {
 		console.log("No events found.");
 		return;
 	}
-	oneDay.forEach((event : any) => {
-	  const channel = client.channels.cache.get(event.channel);
-	  channel.send(`**Reminder:** ${event.name} is starting in 24 hours! <@&${event.role}>`);
-  
-	  // Mark the event as having had a reminder sent
-	  event.update({ reminderSent: true });
-	});
-
+	
 	oneHour.forEach((event : any) => {
+		let minutesUntilEvent = event.date.getTime() - now.getTime();
+		minutesUntilEvent = Math.floor(minutesUntilEvent / 1000 / 60);
 		const channel = client.channels.cache.get(event.channel);
-		channel.send(`**Reminder:** ${event.name} is starting in 1 hour! <@&${event.role}>`);
+		channel.send(`**Reminder:** ${event.name} is starting in ${minutesUntilEvent}! <@&${event.role}>`);
 
 		// Mark the event as having had a reminder sent
-		event.update({ reminderSent: true });
+		//event.update({ hourReminder: true });
+		//event.update({ dayReminder: true });
 	});
 
-  }, 15  * 60 * 1000); // Check every 15 minutes
+	oneDay.forEach((event : any) => {
+		let timeUntilEvent = event.date.getTime() - now.getTime();
+		timeUntilEvent = Math.floor(timeUntilEvent / 1000 / 60);
+	  const channel = client.channels.cache.get(event.channel);
+	  channel.send(`**Reminder:** ${event.name} is starting in  ${timeUntilEvent}! <@&${event.role}>`);
+  
+	  // Mark the event as having had a reminder sent
+	  //event.update({ dayReminder: true });
+	});
+
+	
+  },   60 * 1000); // Check every 1 minute

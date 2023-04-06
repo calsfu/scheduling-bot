@@ -71,6 +71,8 @@ module.exports = {
         //let reply = 'Successfuly added **' + name + '** to the schedule on **' + date + '** at **' + time + '**' + ' for <@&' + role + '>';
 		const message = await interaction.reply({ embeds: [embed], fetchReply: true, components: [row]  });
         const collector = message.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15000 });
+        const time = embed.setTimestamp();
+        console.log(time);
         // message.react('👍');
         // message.awaitReactionsRemove({max: 2, time: 60000, errors: ['time'] }, user)
         //     .then((collected : any) => {

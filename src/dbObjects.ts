@@ -8,8 +8,9 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 });
 
 const Calendar = require('./models/Calendar.ts')(sequelize, Sequelize.DataTypes);
+const Timezone = require('./models/Timezone.ts')(sequelize, Sequelize.DataTypes);
 
-export { Calendar };
+export { Calendar, Timezone };
 
 // const CurrencyShop = require('./models/CurrencyShop.js')(sequelize, DataTypes);
 // const UserItems = require('./models/UserItems.js')(sequelize, DataTypes);

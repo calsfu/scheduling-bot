@@ -8,7 +8,7 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 });
 
 const Calendar = require('./models/Calendar.ts')(sequelize, DataTypes);
-
+const Timezone = require('./models/Timezone.ts')(sequelize, DataTypes);
 
 const force = process.argv.includes('--force') || process.argv.includes('-f');
 
