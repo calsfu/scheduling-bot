@@ -1,5 +1,8 @@
 import { SlashCommandBuilder } from 'discord.js';
 const { Calendar  } = require('../../src/dbObjects.ts');
+import { Timezone } from '../dbObjects';
+import moment from 'moment-timezone';
+
 //get the schedule from the database
 //print the schedule
 
@@ -17,13 +20,28 @@ module.exports = {
                 .setRequired(true)
         )
     ,
-    async execute(interaction:any ) {
+    async execute(interaction:any ) { 
         //let schedule = await interaction.client.db.getSchedule();
         //let timezone = interaction.client.db.getTimezone();
-        console.log("Timezone: " + Intl.DateTimeFormat().resolvedOptions().timeZone); 
+        
         let role = interaction.options.getRole('role');
         let schedule = await Calendar.findAll({ where: { role: role.id}});
         let message = "**Current Schedule for " + '<@&' + role + '>**' +":\n";
+        
+        //Date is currently stored in UTC. I need to convert it to the timezone of the server.
+        let timezone = await Timezone.findAll({ //get timezone of server. 
+            where: {
+                guild : interaction.guild.id
+            }
+        });
+        if(timezone.length == 0){ //if timezone is not set, set it to UTC
+            timezone = 'UTC';
+        }
+        else {
+            timezone = timezone[0].timezone;
+        }
+        //Now that I have the timezone, I need to convert the date to that timezone.
+
         //for each event in the schedule
         //print the event
         let a = new Date();
@@ -37,7 +55,12 @@ module.exports = {
         //schedule.date.setUTCHours(0);
         //console.log(schedule[3].dataValues.date.getDay())
         for (let event of schedule) {
-            message = message + dow[event.date.getDay()] + ', ' + months[event.date.getMonth()] + " " + event.date.getDate() + ' at '  + event.date.getUTCHours() + ":" +  event.name + '\n';
+            let date = moment(event.date).tz(timezone);
+            let month = parseInt(date.format('MM')) - 1;
+            let day = date.format('DD');
+            let time = date.format('HH:mm');
+            console.log(date.format('YYYY-MM-DD HH:mm:ss z'));
+            message = message + dow[event.date.getDay()] + ', ' + months[month] + " " + day + ' at '  + time + ":" +  event.name + '\n';
         }
         // console.log(schedule);
         await interaction.reply(message);

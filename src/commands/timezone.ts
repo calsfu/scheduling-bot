@@ -1,6 +1,6 @@
 //take an input from the user and set the timezone to a server
 import { SlashCommandBuilder } from 'discord.js';
-const { Timezone } = require('../../src/dbObjects.ts'); 
+import { Timezone } from '../dbObjects';
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -36,10 +36,20 @@ module.exports = {
     async execute(interaction : any) {
         const timezone = interaction.options.getString('timezone');
         const guild = interaction.guild.id;
-        const event = await Timezone.create({ //adds to database
-            timezone: timezone,
-            guild: guild,
+        const guildTimezone = await Timezone.findAll({
+            where: {
+                guild : interaction.guild.id
+            }
         });
+        if(guildTimezone.length != 0){ //updates timezone if already set
+            guildTimezone.update({timezone: timezone});
+        }
+        else {
+            await Timezone.create({ //adds to database
+                timezone: timezone,
+                guild: guild,
+            });
+        }
         await interaction.reply({ content: `Timezone set to ${timezone}`, ephemeral: true});
     }
 }

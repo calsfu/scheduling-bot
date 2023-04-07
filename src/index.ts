@@ -113,7 +113,7 @@ setInterval(async () => {
 				[Op.lt]: oneHourFromNow,
 				[Op.gt]: now,
 			},
-			hourReminder: false,
+							
 		}
 	});
 	if (!oneDay.length && !oneHour.length) {

@@ -1,4 +1,4 @@
-import { ActionRowBuilder, Events, ModalBuilder, TextInputBuilder, TextInputStyle, StringSelectMenuBuilder } from 'discord.js';
+import { ActionRowBuilder, Events, ModalBuilder, TextInputBuilder, EmbedBuilder,  TextInputStyle, StringSelectMenuBuilder } from 'discord.js';
 import { Calendar } from '../dbObjects';
 import { Timezone } from '../dbObjects';
 import { SlashCommandBuilder } from 'discord.js';
@@ -278,7 +278,19 @@ module.exports = {
                     let strTime = hours + ':' + minute + ' ' + ampm;
                     return strTime;
                 }
-                let reply = 'Successfuly added **' + name + '** to the schedule on **' + date + '** at **' + returnTime(finalDate) + timezone + '**' + ' for <@&' + role.id +  '>';
+
+                // let embed = new EmbedBuilder() 
+                //     .setColor(0x0099FF)
+                //     .setTitle("New Event Created")
+                //     .setDescription('React to this message to join ' + name + ' with')
+                //     .addFields( 
+                //         {name: 'Event Type', value:name, inline:true},
+                //         {name: 'day', value: date, inline: true},
+                //         {name: 'time', value: returnTime(finalDate), inline: true},
+                //     )    
+                //     .setTimestamp();
+
+                let reply = 'Successfuly added **' + name + '** to the schedule on **' + date + '** at **' + returnTime(finalDate) + " " + timezone + '**' + ' for <@&' + role.id +  '>';
                 await submitted.reply(reply); //replies to text
             } catch (error) {
                 console.log(error);
