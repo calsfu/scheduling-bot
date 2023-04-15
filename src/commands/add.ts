@@ -234,6 +234,7 @@ module.exports = {
 
                 //let finalDate = new Date(2023, monthNumber, day, hour, minute);
                 let ISOdate = "2023-" + monthNumber + "-" + day + "T" + hour + ":" + minute + ":00";
+                let ISOdateMoment = moment(ISOdate);
                 const momentDate = moment.tz(ISOdate, timezone);
                 console.log(momentDate);
                 console.log(momentDate.format());
@@ -279,19 +280,21 @@ module.exports = {
                     return strTime;
                 }
 
-                // let embed = new EmbedBuilder() 
-                //     .setColor(0x0099FF)
-                //     .setTitle("New Event Created")
-                //     .setDescription('React to this message to join ' + name + ' with')
-                //     .addFields( 
-                //         {name: 'Event Type', value:name, inline:true},
-                //         {name: 'day', value: date, inline: true},
-                //         {name: 'time', value: returnTime(finalDate), inline: true},
-                //     )    
-                //     .setTimestamp();
+                let embed = new EmbedBuilder() 
+                    .setColor(0x0099FF)
+                    .setTitle("New Event Created")
+                    .setDescription(`<@${interaction.user.id}> has scheduled a new event`)
+                    .addFields( 
+                        {name: 'name', value:name, inline:true},
+                        {name: 'day', value: date, inline: true},
+                        {name: 'time', value: ISOdateMoment.tz(timezone).format('ha'), inline: true},
+                        {name: 'timezone', value: timezone, inline: true},
+                    )    
+                    .setTimestamp();
 
                 let reply = 'Successfuly added **' + name + '** to the schedule on **' + date + '** at **' + returnTime(finalDate) + " " + timezone + '**' + ' for <@&' + role.id +  '>';
-                await submitted.reply(reply); //replies to text
+                //await submitted.reply(embed); //replies to text
+                await submitted.reply({embeds: [embed]}); //replies to text
             } catch (error) {
                 console.log(error);
                 return submitted.reply({ content: 'Invalid Date. If this an error, please dm calsfu#9126', ephemeral: true });
