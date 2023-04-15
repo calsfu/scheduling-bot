@@ -1,6 +1,6 @@
 //take an input from the user and set the timezone to a server
-import { SlashCommandBuilder } from 'discord.js';
-import { Timezone } from '../dbObjects';
+import { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ComponentType, ActionRowBuilder, escapeStrikethrough } from 'discord.js';
+import { Timezone, Calendar } from '../dbObjects';
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -42,7 +42,62 @@ module.exports = {
             }
         });
         if(guildTimezone.length != 0){ //updates timezone if already set
-            guildTimezone.update({timezone: timezone});
+            
+            const row = new ActionRowBuilder()
+			.addComponents(
+				new ButtonBuilder()
+					.setCustomId('primary')
+					.setLabel('👍')
+					.setStyle(ButtonStyle.Primary),
+            );
+            const message = await interaction.reply({  ephemeral: true, components: [row], content: `Timezone already set to **${guildTimezone[0].timezone}**. Do you want to change it to **${timezone}**? Warning: Changing timezone will delete all entries in the calendar.`});
+            //const filter = (m:any) => m.author.id === interaction.user.id;
+            //const collector = message.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15000 });
+            const filter = (i : any) => {
+                i.deferUpdate();
+                return i.user.id === interaction.user.id;
+            };
+            message.awaitMessageComponent({ filter, componentType: ComponentType.Button, time: 60000 })
+                .then((interaction : any) => 
+                {
+                    //interaction.editReply({ content: `Timezone set to ${timezone}`, ephemeral: true});
+                    //edit the message to remove the button and have text saying "Timezone set to ${timezone}"
+
+                    //interaction.reply({ content: `Timezone set to ${timezone}`, ephemeral: true});
+                    message.edit({ content: `Timezone set to **${timezone}**`, ephemeral: true, components: []});
+                    Calendar.destroy({
+                        where: {
+                            guild: guild
+                        }
+                    });
+                    guildTimezone[0].update({
+                        timezone: timezone
+                    });
+                })
+                
+                .catch((err : any) => console.log("Unchanged timezone"));
+            // collector.on('collect', (i:any) => {
+                
+            //     //i.deferUpdate();
+            //     if (i.customId === 'primary' && i.user.id === interaction.user.id) {
+            //         i.reply({ content: `Timezone set to ${timezone}` , ephemeral: true})
+            //         Calendar.destroy({
+            //             where: {
+            //                 guild: guild
+            //             }
+            //         });
+            //         guildTimezone[0].update({
+            //             timezone: timezone
+            //         });
+            //         //message.send({ content: `Timezone set to `, ephemeral: true});
+                    
+            //     }
+            // });
+            // collector.on('end', (collected : any) => {
+            //     console.log(`Collected ${collected.size} interactions.`);
+            // });
+            
+           return;
         }
         else {
             await Timezone.create({ //adds to database
