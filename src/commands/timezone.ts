@@ -105,6 +105,6 @@ module.exports = {
                 guild: guild,
             });
         }
-        await interaction.reply({ content: `Timezone set to ${timezone}`, ephemeral: true});
+        await interaction.reply({ content: `Timezone set to **${timezone}**`, ephemeral: true});
     }
 }

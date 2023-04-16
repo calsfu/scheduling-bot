@@ -96,11 +96,11 @@ setInterval(async () => {
 	const now = new Date();
 	const twentyFourHoursFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 	const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
-  
+	
 	const oneDay = await Calendar.findAll({
 	  where: {
 		date: {
-		  [Op.lt]: twentyFourHoursFromNow,
+		  [Op.lt]: twentyFourHoursFromNow, //equivalent to SQL: date < twentyFourHoursFromNow
 		  [Op.gt]: now,
 		},
 		dayReminder: false,
@@ -110,13 +110,28 @@ setInterval(async () => {
 	const oneHour = await Calendar.findAll({
 		where: {
 			date: {
-				[Op.lt]: oneHourFromNow,
+				[Op.lt]: oneHourFromNow, 
 				[Op.gt]: now,
 			},
-							
+			hourReminder: false,	
 		}
 	});
-	if (!oneDay.length && !oneHour.length) {
+	const passedTime = await Calendar.findAll({
+		where: {
+			date: {
+				[Op.lt]: now,
+			},
+		}
+	});
+	
+	passedTime.forEach((event : any) => { //delete events that have passed
+		console.log("Event destroyed");
+		const channel = client.channels.cache.get(event.channel);
+		channel.send(`${event.name} is starting now! <@&${event.role}>`)
+		event.destroy();
+	});
+
+	if (!oneDay.length && !oneHour.length && !passedTime.length) { 
 		console.log("No events found.");
 		return;
 	}
@@ -125,21 +140,20 @@ setInterval(async () => {
 		let minutesUntilEvent = event.date.getTime() - now.getTime();
 		minutesUntilEvent = Math.floor(minutesUntilEvent / 1000 / 60);
 		const channel = client.channels.cache.get(event.channel);
-		channel.send(`**Reminder:** ${event.name} is starting in ${minutesUntilEvent}! <@&${event.role}>`);
-
+		channel.send(`**Reminder:** ${event.name} is starting soon at ${event.localTime}! <@&${event.role}>`);
 		// Mark the event as having had a reminder sent
-		//event.update({ hourReminder: true });
-		//event.update({ dayReminder: true });
+		event.update({ hourReminder: true });
+		event.update({ dayReminder: true });
 	});
 
 	oneDay.forEach((event : any) => {
 		let timeUntilEvent = event.date.getTime() - now.getTime();
 		timeUntilEvent = Math.floor(timeUntilEvent / 1000 / 60);
 	  const channel = client.channels.cache.get(event.channel);
-	  channel.send(`**Reminder:** ${event.name} is starting in  ${timeUntilEvent}! <@&${event.role}>`);
+	  channel.send(`**Reminder:** ${event.name} is starting tomorrow at ${event.localTime}! <@&${event.role}>`);
   
 	  // Mark the event as having had a reminder sent
-	  //event.update({ dayReminder: true });
+	  event.update({ dayReminder: true });
 	});
 
 	
