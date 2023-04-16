@@ -245,14 +245,22 @@ module.exports = {
                 }
                 console.log(finalDate);
                 
-                let currentDate = new Date();
-                console.log(currentDate); 
-
+                const currentDate = new Date();
+                const oneHourFromNow = new Date(currentDate.getTime() + 60 * 60 * 1000);
+                const twentyFourHoursFromNow = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
+                let dayReminder = false;
+                let hourReminder = false;
+                if(finalDate < oneHourFromNow) {
+                    hourReminder = true;
+                }
+                if(finalDate < twentyFourHoursFromNow) {
+                    dayReminder = true;
+                }
                 if(finalDate < currentDate) {
                     console.log("Date is in the past");
                     return submitted.reply({ content: 'Invalid Date: Date is in the past', ephemeral: true });
                 }
-
+                const localTime = ISOdateMoment.tz(timezone).format('HH:mm a');
                 const event = await Calendar.create({ //adds to database
                     name: name,
                     description: description,
@@ -260,8 +268,9 @@ module.exports = {
                     role: role.id,
                     guild: interaction.guildId,
                     channel: interaction.channelId,
-                    dayReminder: false,
-                    hourReminder: false,
+                    localTime: localTime,
+                    dayReminder: dayReminder,
+                    hourReminder: hourReminder,
                 });
 
                 if(event) { 
@@ -287,7 +296,7 @@ module.exports = {
                     .addFields( 
                         {name: 'name', value:name, inline:true},
                         {name: 'day', value: date, inline: true},
-                        {name: 'time', value: ISOdateMoment.tz(timezone).format('ha'), inline: true},
+                        {name: 'time', value: localTime, inline: true},
                         {name: 'timezone', value: timezone, inline: true},
                     )    
                     .setTimestamp();
@@ -303,19 +312,19 @@ module.exports = {
         
         
 	},
-    async autocomplete(interaction:any) {
-		const focusedValue = interaction.options.getFocused(true);
-        let choices = ['failed'];
-        if(focusedValue.name == 'name') {
-            choices = ['match', 'scrim', 'practice', 'tournament', 'other'];
-        }
-        if(focusedValue.name == 'time') {
-            choices = ['10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM', '5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM', '8:30 PM', '9:00 PM', '9:30 PM', '10:00 PM'];
+    // async autocomplete(interaction:any) { //No longer using autocomplete
+	// 	const focusedValue = interaction.options.getFocused(true);
+    //     let choices = ['failed'];
+    //     if(focusedValue.name == 'name') {
+    //         choices = ['match', 'scrim', 'practice', 'tournament', 'other'];
+    //     }
+    //     if(focusedValue.name == 'time') {
+    //         choices = ['10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM', '5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM', '8:30 PM', '9:00 PM', '9:30 PM', '10:00 PM'];
 
-        }
-		const filtered = choices.filter(choice => choice.startsWith(focusedValue.value));
-		await interaction.respond(
-			filtered.map(choice => ({ name: choice, value: choice })),
-		);
-    },
+    //     }
+	// 	const filtered = choices.filter(choice => choice.startsWith(focusedValue.value));
+	// 	await interaction.respond(
+	// 		filtered.map(choice => ({ name: choice, value: choice })),
+	// 	);
+    // },
 }
