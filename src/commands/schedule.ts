@@ -41,10 +41,13 @@ module.exports = {
             timezone = timezone[0].timezone;
         }
         //Now that I have the timezone, I need to convert the date to that timezone.
+        //need to sort Calendar object so its in order from least to greatest.
+        schedule.sort((a:any, b:any) => {
+            return a.date - b.date;
+        });
 
         //for each event in the schedule
         //print the event
-        let a = new Date();
         // console.log(a.getHours())
         // console.log(schedule[0].date)
         // console.log(schedule[0].date.getTimezoneOffset())
@@ -54,13 +57,17 @@ module.exports = {
         // console.log(schedule[0].dataValues.date.getTimezoneOffset())
         //schedule.date.setUTCHours(0);
         //console.log(schedule[3].dataValues.date.getDay())
+        let counter = 1;
         for (let event of schedule) {
             let date = moment(event.date).tz(timezone);
             let month = parseInt(date.format('MM')) - 1;
             let day = date.format('DD');
-            let time = date.format('HH:mm');
+            let time = date.format('HH:mm a');
+            event.update({number : counter});
+            
             console.log(date.format('YYYY-MM-DD HH:mm:ss z'));
-            message = message + dow[event.date.getDay()] + ', ' + months[month] + " " + day + ' at '  + time + ":" +  event.name + '\n';
+            message = message + counter + ": " + dow[event.date.getDay()] + ', ' + months[month] + " " + day + ' at '  + time + ": " +  event.name + '\n';
+            counter++;
         }
         // console.log(schedule);
         await interaction.reply(message);
