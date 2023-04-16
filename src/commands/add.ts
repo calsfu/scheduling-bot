@@ -1,7 +1,5 @@
-import { ActionRowBuilder, Events, ModalBuilder, TextInputBuilder, EmbedBuilder,  TextInputStyle, StringSelectMenuBuilder } from 'discord.js';
-import { Calendar } from '../dbObjects';
-import { Timezone } from '../dbObjects';
-import { SlashCommandBuilder } from 'discord.js';
+import { ActionRowBuilder, Events, ModalBuilder, TextInputBuilder, EmbedBuilder,  TextInputStyle, StringSelectMenuBuilder, SlashCommandBuilder } from 'discord.js';
+import { Calendar, Timezone } from '../dbObjects';
 import { error } from 'console';
 import moment from 'moment-timezone';
 //import '../../moment-timezone-with-data';
@@ -260,7 +258,7 @@ module.exports = {
                     console.log("Date is in the past");
                     return submitted.reply({ content: 'Invalid Date: Date is in the past', ephemeral: true });
                 }
-                const localTime = ISOdateMoment.tz(timezone).format('HH:mm a');
+                const localTime = ISOdateMoment.tz(timezone).format('h:mm a');
                 const event = await Calendar.create({ //adds to database
                     name: name,
                     description: description,
@@ -298,10 +296,10 @@ module.exports = {
                         {name: 'day', value: date, inline: true},
                         {name: 'time', value: localTime, inline: true},
                         {name: 'timezone', value: timezone, inline: true},
+                        {name: 'role', value: `<@&${role.id}>`, inline: true},
                     )    
                     .setTimestamp();
 
-                let reply = 'Successfuly added **' + name + '** to the schedule on **' + date + '** at **' + returnTime(finalDate) + " " + timezone + '**' + ' for <@&' + role.id +  '>';
                 //await submitted.reply(embed); //replies to text
                 await submitted.reply({embeds: [embed]}); //replies to text
             } catch (error) {

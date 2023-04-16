@@ -1,6 +1,5 @@
 import { SlashCommandBuilder } from 'discord.js';
-const { Calendar  } = require('../../src/dbObjects.ts');
-import { Timezone } from '../dbObjects';
+import { Calendar, Timezone } from '../dbObjects';
 import moment from 'moment-timezone';
 
 //get the schedule from the database
@@ -62,11 +61,11 @@ module.exports = {
             let date = moment(event.date).tz(timezone);
             let month = parseInt(date.format('MM')) - 1;
             let day = date.format('DD');
-            let time = date.format('HH:mm a');
+            let time = date.format('h:mm a');
             event.update({number : counter});
             
             console.log(date.format('YYYY-MM-DD HH:mm:ss z'));
-            message = message + counter + ": " + dow[event.date.getDay()] + ', ' + months[month] + " " + day + ' at '  + time + ": " +  event.name + '\n';
+            message = message + counter + ". " + dow[event.date.getDay()] + ', ' + months[month] + " " + day + ' at '  + time + ": " +  event.name + '\n';
             counter++;
         }
         // console.log(schedule);

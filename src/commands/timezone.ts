@@ -11,9 +11,11 @@ module.exports = {
                 .setDescription('The timezone to set')
                 .addChoices(
                     { name: 'America/Los_Angeles', value: 'America/Los_Angeles'},
-                    { name: 'America/Mountain', value: 'Americas/Mountain'},
-                    { name: 'America/Central', value: 'Americas/Central'},
+                    { name: 'America/Phoenix', value: 'America/Phoenix'},
+                    { name: 'America/Denver', value: 'America/Denver'},
+                    { name: 'America/Chicago', value: 'America/Chicago'},
                     { name: 'America/New_York', value: 'America/New_York'},
+                    { name: 'America/Puerto_Rico', value: 'America/Puerto_Rico'},
                     { name: 'Asia/Tokyo', value: 'Asia/Tokyo'},
                     { name: 'Asia/Shanghai', value: 'Asia/Shanghai'},
                     { name: 'Asia/Hong_Kong', value: 'Asia/Hong_Kong'},
@@ -29,6 +31,7 @@ module.exports = {
                     { name: 'Europe/Istanbul', value: 'Europe/Istanbul'},
                     { name: 'Europe/Moscow', value: 'Europe/Moscow'},
                     { name: 'Europe/Amsterdam', value: 'Europe/Amsterdam'},
+                    { name: 'Europe/Stockholm', value: 'Europe/Stockholm'},
                 )
                 .setRequired(true))
                 
@@ -41,8 +44,12 @@ module.exports = {
                 guild : interaction.guild.id
             }
         });
+
         if(guildTimezone.length != 0){ //updates timezone if already set
-            
+            if(timezone == guildTimezone[0].timezone){
+                await interaction.reply({ content: `Timezone already set to **${timezone}**`, ephemeral: true});
+                return;
+            }
             const row = new ActionRowBuilder()
 			.addComponents(
 				new ButtonBuilder()

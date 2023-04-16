@@ -1,5 +1,4 @@
 import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } from 'discord.js';
-const { InteractionOptionTypes } = require('discord-interactions');
 
 function playerString(players:any) {
     let string = '';
@@ -44,7 +43,7 @@ module.exports = {
         
         const name = interaction.options.getString('name');
         const num = interaction.options.getInteger('num');
-        const rank = interaction.options.getRole('rank');
+        const rank = interaction.options.getString('rank');
         const filter = (i : any) => i.customId === 'primary' && i.user.id === '122157285790187530';
         const user = interaction.user;
         let players = [user.id];

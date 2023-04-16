@@ -1,9 +1,13 @@
 import { config } from 'dotenv';
 import { Calendar } from './dbObjects';
 import { Sequelize, DataTypes, Op } from 'sequelize';
-const fs = require('node:fs');
-const path = require('node:path');
-const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
+import fs from 'node:fs';
+import path from 'node:path';
+import { Collection, Events, GatewayIntentBits } from 'discord.js';
+const { Client } = require('discord.js');
+
+
+// import { Client, Collection, Events, GatewayIntentBits } from 'discord.js';
 
 
 config();
@@ -11,10 +15,12 @@ config();
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions] });
 
-client.commands = new Collection();
+
 
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter((file:any) => file.endsWith('.ts'));
+
+client.commands = new Collection();
 
 for (const file of commandFiles) {
 	const filePath = path.join(commandsPath, file);
