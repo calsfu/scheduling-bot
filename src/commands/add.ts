@@ -39,10 +39,6 @@ let monthNumbers: {[key: string]: string} = {
     "dec": "12",
 
 }
-const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const dow = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -106,25 +102,6 @@ module.exports = {
             .setRequired(false)
             .setStyle(TextInputStyle.Paragraph);;
 
-        const select = new ActionRowBuilder()
-			.addComponents(
-				new StringSelectMenuBuilder()
-					.setCustomId('select')
-					.setPlaceholder('Role')
-					.addOptions(
-						{
-							label: 'Select me',
-							description: 'This is a description',
-							value: 'first_option',
-						},
-						{
-							label: 'You can select me too',
-							description: 'This is also a description',
-							value: 'second_option',
-						},
-					),
-			);        
-        
         const firstActionRow: ActionRowBuilder<TextInputBuilder> = new ActionRowBuilder();
         const secondActionRow: ActionRowBuilder<TextInputBuilder> = new ActionRowBuilder()
         const thirdActionRow : ActionRowBuilder<TextInputBuilder>= new ActionRowBuilder()
@@ -225,10 +202,6 @@ module.exports = {
                 hour = hour.padStart(2, '0');
                 day = day.padStart(2, '0'); 
                 minute = minute.padStart(2, '0');
-                console.log("month " + monthNumber);
-                console.log("day " + day);
-                console.log("hour " + hour);
-                console.log("minute " + minute);
 
                 //let finalDate = new Date(2023, monthNumber, day, hour, minute);
                 let ISOdate = "2023-" + monthNumber + "-" + day + "T" + hour + ":" + minute + ":00";
@@ -275,17 +248,6 @@ module.exports = {
                     console.log("added to calender");
                 }
 
-                let returnTime = function(time:Date) {
-                    let hours = time.getUTCHours();
-                    let minutes = time.getMinutes();
-                    let ampm = hours >= 12 ? 'pm' : 'am';
-                    hours = hours % 12;
-                    hours = hours ? hours : 12; // the hour '0' should be '12'
-                // let minminutes = minutes < 10 ? '0' + minutes : minutes;
-                    minute = minute.padStart(2, '0');
-                    let strTime = hours + ':' + minute + ' ' + ampm;
-                    return strTime;
-                }
                 let testDate = "<t:" + unixDate + ":d>"; //returns date in the form <t:unixDate>
                 let testTime = "<t:" + unixDate + ":t>"; //returns time in the form <t:unixDate>
                 let embed = new EmbedBuilder() 
