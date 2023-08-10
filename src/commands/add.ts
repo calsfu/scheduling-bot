@@ -242,7 +242,7 @@ module.exports = {
                     throw(error);
                 }
                 console.log(finalDate);
-                
+                let unixDate = finalDate.getTime()/1000;
                 const currentDate = new Date();
                 const oneHourFromNow = new Date(currentDate.getTime() + 60 * 60 * 1000);
                 const twentyFourHoursFromNow = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
@@ -286,16 +286,17 @@ module.exports = {
                     let strTime = hours + ':' + minute + ' ' + ampm;
                     return strTime;
                 }
-
+                let testDate = "<t:" + unixDate + ":d>"; //returns date in the form <t:unixDate>
+                let testTime = "<t:" + unixDate + ":t>"; //returns time in the form <t:unixDate>
                 let embed = new EmbedBuilder() 
                     .setColor(0x0099FF)
                     .setTitle("New Event Created")
                     .setDescription(`<@${interaction.user.id}> has scheduled a new event`)
                     .addFields( 
                         {name: 'name', value:name, inline:true},
-                        {name: 'day', value: date, inline: true},
-                        {name: 'time', value: localTime, inline: true},
-                        {name: 'timezone', value: timezone, inline: true},
+                        {name: 'day', value: testDate, inline: true},
+                        {name: 'time', value: testTime, inline: true},
+                        //{name: 'timezone', value: timezone, inline: true},
                         {name: 'role', value: `<@&${role.id}>`, inline: true},
                     )    
                     .setTimestamp();

@@ -34,7 +34,6 @@ module.exports = {
                     { name: 'Europe/Stockholm', value: 'Europe/Stockholm'},
                 )
                 .setRequired(true))
-                
             ,
     async execute(interaction : any) {
         const timezone = interaction.options.getString('timezone');

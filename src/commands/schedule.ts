@@ -56,6 +56,11 @@ module.exports = {
         // console.log(schedule[0].dataValues.date.getTimezoneOffset())
         //schedule.date.setUTCHours(0);
         //console.log(schedule[3].dataValues.date.getDay())
+        if(schedule.length == 0){
+            message = "No events found. Use /add to add an event";
+            await interaction.reply(message);
+            return;
+        }
         let counter = 1;
         for (let event of schedule) {
             let date = moment(event.date).tz(timezone);
@@ -65,7 +70,10 @@ module.exports = {
             event.update({number : counter});
             
             console.log(date.format('YYYY-MM-DD HH:mm:ss z'));
-            message = message + counter + ". " + dow[event.date.getDay()] + ', ' + months[month] + " " + day + ' at '  + time + ": " +  event.name + '\n';
+            //message = message + counter + ". " + dow[event.date.getDay()] + ', ' + months[month] + " " + day + ' at '  + time + ": " +  event.name + '\n';
+            console.log(event.date.getTime()/1000);
+            console.log(event.date.getTime());
+            message = message + counter + ". <t:" + event.date.getTime()/1000 + ":f>" + ": " +  event.name + '\n';
             counter++;
         }
         // console.log(schedule);
